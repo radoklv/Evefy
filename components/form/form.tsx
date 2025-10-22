@@ -1,6 +1,6 @@
 "use client";
 import { FormState, submitPrompt } from "@/actions/asyncAction";
-import React, { useActionState } from "react";
+import React, { useActionState, useEffect } from "react";
 import styles from "./form.module.scss";
 
 const Form: React.FC = () => {
@@ -8,6 +8,10 @@ const Form: React.FC = () => {
     submitPrompt,
     { message: "" }
   );
+
+  // useEffect(() => {
+  //   console.log("Message", state.message);
+  // }, [state.message]);
 
   return (
     <form action={formAction} className={styles.formWrapper}>
