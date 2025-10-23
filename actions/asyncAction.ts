@@ -1,5 +1,12 @@
 "use server";
 import { createAgent } from "@/lib/agent";
+import {
+  ArchitectOutputSchema,
+  HumanResourceOutputSchema,
+  ProjectAnalystOutputSchema,
+  SalesOutputSchema,
+  ValidatorOutputSchema,
+} from "@/types/agents";
 import { run } from "@openai/agents";
 
 export type FormState = {
@@ -20,48 +27,65 @@ export async function submitPrompt(
 export async function runAgentsPipeline(inputText: string): Promise<string> {
   const validatorAgent = createAgent(
     "Requirements Validator",
-    "You read project requirements and generate only and relevant information about the project"
+    "Extract project goals, context, and key requirements from the input text.",
+    ValidatorOutputSchema
   );
 
-  const solutionArchitectAgent = createAgent(
+  const architectAgent = createAgent(
     "Solution Architect",
-    "You analyze data from Requirements Validator and create 'Architectural Documentation' about the project. Also generate what software developers will be required for the project."
+    "Design architecture and define required technical roles based on validated requirements.",
+    ArchitectOutputSchema
   );
 
-  const projectAnalystAgent = createAgent(
+  const analystAgent = createAgent(
     "Project Analyst",
-    "You receive information from 'Solution Architect' and generate cost for workforce"
+    "You will analyze the technical information from Solution architect, and you will generate 'workforceEstimate' based on this information. You can improvise.",
+    ProjectAnalystOutputSchema
   );
 
-  const humanResourceAgent = createAgent(
+  const hrAgent = createAgent(
     "Human Resource",
-    "You will receive information from 'Project Analyst' and will generate project workforce cost"
+    "Calculate workforce cost using estimated FTEs and standard EU blended rates.",
+    HumanResourceOutputSchema
   );
 
   const salesAgent = createAgent(
     "Sales man",
-    "You will generate formatted offer to the end client."
+    "Generate a professional, client-facing proposal letter summarizing the project and cost breakdown in business language, formatted like an official offer document",
+    SalesOutputSchema
   );
 
-  const validationStep = await run(validatorAgent, inputText);
+  const validatorAgentOutput = await run(validatorAgent, inputText);
 
-  // Step 2: Analyze
-  const solutionArchitectStep = await run(
-    solutionArchitectAgent,
-    validationStep.finalOutput || ""
+  const validationAgentParsedOutput = JSON.stringify(
+    ValidatorOutputSchema.safeParse(validatorAgentOutput.finalOutput).data
   );
 
-  const projectAnalystStep = await run(
-    projectAnalystAgent,
-    solutionArchitectStep.finalOutput || ""
+  const architectAgentOutput = await run(
+    architectAgent,
+    validationAgentParsedOutput
   );
 
-  const humanResourceStep = await run(
-    humanResourceAgent,
-    projectAnalystStep.finalOutput || ""
-  );
+  // const architectAgentParsedOutput = JSON.stringify(
+  //   ArchitectOutputSchema.safeParse(architectAgentOutput.finalOutput).data
+  // );
 
-  const salesStep = await run(salesAgent, humanResourceStep.finalOutput || "");
+  // const analystAgentOutput = await run(
+  //   analystAgent,
+  //   architectAgentParsedOutput
+  // );
 
-  return salesStep.finalOutput || "";
+  // const analystAgentParsedOutput = JSON.stringify(
+  //   ProjectAnalystOutputSchema.safeParse(analystAgentOutput.finalOutput).data
+  // );
+
+  // const hrAgentOutput = await run(hrAgent, analystAgentParsedOutput);
+
+  // const hrAgentParsedOutput = JSON.stringify(
+  //   HumanResourceOutputSchema.safeParse(hrAgentOutput.finalOutput).data
+  // );
+
+  // const salesAgentOutput = await run(salesAgent, hrAgentParsedOutput);
+
+  return "dasdas";
 }
