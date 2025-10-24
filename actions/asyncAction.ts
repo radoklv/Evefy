@@ -11,7 +11,7 @@ import {
 } from "@/types/agents";
 import { agentops } from "agentops";
 
-import { parseAgentOutput } from "@/lib/parser";
+import { runAgent } from "@/lib/run-agent";
 
 export type FormState = {
   message: string;
@@ -36,7 +36,7 @@ export async function runAgentsPipeline(inputText: string): Promise<string> {
   const [validatorAgent, architectAgent, analystAgent, hrAgent, salesAgent] =
     initAgents();
 
-  const validatorAgentOutput = await parseAgentOutput(
+  const validatorAgentOutput = await runAgent(
     validatorAgent,
     ValidatorOutputSchema,
     inputText
@@ -51,25 +51,25 @@ export async function runAgentsPipeline(inputText: string): Promise<string> {
     });
   }
 
-  const architectAgentOutput = await parseAgentOutput(
+  const architectAgentOutput = await runAgent(
     architectAgent,
     ArchitectOutputSchema,
     validatorAgentOutput
   );
 
-  const analystAgentOutput = await parseAgentOutput(
+  const analystAgentOutput = await runAgent(
     analystAgent,
     AnalystOutputSchema,
     architectAgentOutput
   );
 
-  const hrAgentOutput = await parseAgentOutput(
+  const hrAgentOutput = await runAgent(
     hrAgent,
     HumanResourceOutputSchema,
     analystAgentOutput
   );
 
-  const salesAgentOutput = await parseAgentOutput(
+  const salesAgentOutput = await runAgent(
     salesAgent,
     SalesOutputSchema,
     hrAgentOutput

@@ -1,16 +1,25 @@
-import { AnalystOutputSchema, ArchitectOutputSchema, HumanResourceOutputSchema, SalesOutputSchema, ValidatorOutputSchema } from "@/types/agents";
+import {
+  AnalystOutputSchema,
+  ArchitectOutputSchema,
+  HumanResourceOutputSchema,
+  SalesOutputSchema,
+  ValidatorOutputSchema,
+} from "@/types/agents";
 import { Agent } from "@openai/agents";
-import {AnyZodObject, z} from 'zod'
+import { AnyZodObject, z } from "zod";
 
-export function createAgent(name: string, instructions: string, schema: z.AnyZodObject) {
+export function createAgent(
+  name: string,
+  instructions: string,
+  schema: z.AnyZodObject
+) {
   return new Agent({
     name: name,
     model: "o4-mini",
     instructions: instructions,
-    outputType: schema
+    outputType: schema,
   });
 }
-
 
 export function initAgents(): Agent<unknown, AnyZodObject>[] {
   const validatorAgent = createAgent(

@@ -1,7 +1,7 @@
 import { Agent, run } from "@openai/agents";
 import { AnyZodObject, z } from "zod";
 
-export async function parseAgentOutput(
+export async function runAgent(
   agent: Agent<unknown, AnyZodObject>,
   agentSchema: z.AnyZodObject,
   instructions: string
