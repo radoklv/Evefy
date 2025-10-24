@@ -16,7 +16,7 @@ export const ArchitectOutputSchema = z
   })
   .strict();
 
-export const ProjectAnalystOutputSchema = z
+export const AnalystOutputSchema = z
   .object({
     workforceEstimate: z.array(
       z.object({
