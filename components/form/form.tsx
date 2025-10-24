@@ -8,6 +8,7 @@ import LoadingSpinner from "@/lib/loading-spinner/loading-spinner";
 
 const Form: React.FC = () => {
   const [response, setResponse] = useState<SalesOutput | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const [state, formAction, isPending] = useActionState<FormState, FormData>(
     submitPrompt,
@@ -16,14 +17,21 @@ const Form: React.FC = () => {
 
   useEffect(() => {
     if (state.message) {
-      setResponse(JSON.parse(state.message));
+      const parseResponse = JSON.parse(state.message);
+
+      if (parseResponse?.error) {
+        setError(parseResponse.error);
+        return;
+      }
+
+      setResponse(parseResponse);
     }
   }, [state.message]);
 
   return (
     <section className={styles.wrapper}>
       <div className={styles.container}>
-        {!response && !isPending && (
+        {!response && !isPending && !error && (
           <form action={formAction} className={styles.formWrapper}>
             <h1>Enter project specifications: </h1>
             <textarea
@@ -38,21 +46,17 @@ const Form: React.FC = () => {
                 disabled={isPending}
                 className={styles.button}
               >
-                {isPending ? "Thinking..." : "Submit"}
+                Submit
               </button>
-            </div>
-
-            <div className={styles.output}>
-              {state?.message && (
-                <div className={styles.message}>{state.message}</div>
-              )}
             </div>
           </form>
         )}
 
         {isPending && <LoadingSpinner />}
 
-        {response && (
+        {error && <div className={styles.error}>{error}</div>}
+
+        {response != null && (
           <section className={styles.responseWrapper}>
             <div className={styles.offerTitle}>
               <h1>Offer</h1>
@@ -142,17 +146,23 @@ const Form: React.FC = () => {
                 {response.contact.email} | {response.contact.phone}
               </span>
             </div>
+          </section>
+        )}
 
+        {response != null ||
+          (error && (
             <div className={styles.buttonWrapper}>
               <button
                 className={styles.button}
-                onClick={() => setResponse(null)}
+                onClick={() => {
+                  setResponse(null);
+                  setError(null);
+                }}
               >
                 New Offer
               </button>
             </div>
-          </section>
-        )}
+          ))}
       </div>
     </section>
   );

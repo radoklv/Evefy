@@ -6,6 +6,7 @@ import {
   ArchitectOutputSchema,
   HumanResourceOutputSchema,
   SalesOutputSchema,
+  ValidatorOutput,
   ValidatorOutputSchema,
 } from "@/types/agents";
 import { agentops } from "agentops";
@@ -40,6 +41,15 @@ export async function runAgentsPipeline(inputText: string): Promise<string> {
     ValidatorOutputSchema,
     inputText
   );
+
+  const { keyRequirements, endDate, summary }: ValidatorOutput =
+    JSON.parse(validatorAgentOutput);
+
+  if (keyRequirements.length == 0 || endDate == "" || summary == "") {
+    return JSON.stringify({
+      error: "Missing essential initial information about the project",
+    });
+  }
 
   const architectAgentOutput = await parseAgentOutput(
     architectAgent,

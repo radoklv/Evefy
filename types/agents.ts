@@ -4,6 +4,7 @@ export const ValidatorOutputSchema = z
   .object({
     projectName: z.string(),
     summary: z.string(),
+    endDate: z.string(),
     keyRequirements: z.array(z.string()),
   })
   .strict();
