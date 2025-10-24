@@ -1,5 +1,6 @@
 "use server";
 import { createAgent } from "@/lib/agent";
+
 import {
   ArchitectOutputSchema,
   HumanResourceOutputSchema,
@@ -7,6 +8,8 @@ import {
   SalesOutputSchema,
   ValidatorOutputSchema,
 } from "@/types/agents";
+import { agentops } from "agentops";
+
 import { run } from "@openai/agents";
 
 export type FormState = {
@@ -25,6 +28,14 @@ export async function submitPrompt(
 }
 
 export async function runAgentsPipeline(inputText: string): Promise<string> {
+  // // ⬇️ Lazy import so bundler doesn't eagerly crawl OTel plugins
+  // const { agentops } = await import(
+  //   "agentops");
+  // await agentops.init({
+  //   apiKey: "cf1c25f8-abc2-4238-8ff2-380ab5165041",  // if you want explicit
+  //   // nothing else needed—AgentOps wires OTLP by default
+  // });
+
   const validatorAgent = createAgent(
     "Requirements Validator",
     "Extract project goals, context, and key requirements from the input text.",
@@ -66,26 +77,32 @@ export async function runAgentsPipeline(inputText: string): Promise<string> {
     validationAgentParsedOutput
   );
 
-  // const architectAgentParsedOutput = JSON.stringify(
-  //   ArchitectOutputSchema.safeParse(architectAgentOutput.finalOutput).data
-  // );
+  const architectAgentParsedOutput = JSON.stringify(
+    ArchitectOutputSchema.safeParse(architectAgentOutput.finalOutput).data
+  );
 
-  // const analystAgentOutput = await run(
-  //   analystAgent,
-  //   architectAgentParsedOutput
-  // );
+  const analystAgentOutput = await run(
+    analystAgent,
+    architectAgentParsedOutput
+  );
 
-  // const analystAgentParsedOutput = JSON.stringify(
-  //   ProjectAnalystOutputSchema.safeParse(analystAgentOutput.finalOutput).data
-  // );
+  const analystAgentParsedOutput = JSON.stringify(
+    ProjectAnalystOutputSchema.safeParse(analystAgentOutput.finalOutput).data
+  );
 
-  // const hrAgentOutput = await run(hrAgent, analystAgentParsedOutput);
+  const hrAgentOutput = await run(hrAgent, analystAgentParsedOutput);
 
-  // const hrAgentParsedOutput = JSON.stringify(
-  //   HumanResourceOutputSchema.safeParse(hrAgentOutput.finalOutput).data
-  // );
+  const hrAgentParsedOutput = JSON.stringify(
+    HumanResourceOutputSchema.safeParse(hrAgentOutput.finalOutput).data
+  );
 
-  // const salesAgentOutput = await run(salesAgent, hrAgentParsedOutput);
+  const salesAgentOutput = await run(salesAgent, hrAgentParsedOutput);
 
-  return "dasdas";
+  const salesAgentParsedOutput = JSON.stringify(
+    SalesOutputSchema.safeParse(salesAgentOutput.finalOutput).data
+  );
+
+  console.log(salesAgentParsedOutput)
+
+  return salesAgentParsedOutput;
 }

@@ -18,7 +18,12 @@ export const ArchitectOutputSchema = z
 
 export const ProjectAnalystOutputSchema = z
   .object({
-    workforceEstimate: z.record(z.number()), // role -> FTE count
+    workforceEstimate: z.array(
+      z.object({
+        role: z.string(),
+        fte: z.number(),
+      })
+    ), // role -> FTE count
     totalDurationMonths: z.number().int().positive(),
     risks: z.array(z.string()),
     assumptions: z.array(z.string()),
@@ -61,9 +66,9 @@ export const SalesOutputSchema = z
         })
         .strict()
     ),
-    subtotal: z.string(),     // keep as string if you format currency
-    contingency: z.string(),  // same rationale
-    totalCost: z.string(),    // same rationale
+    subtotal: z.string(), // keep as string if you format currency
+    contingency: z.string(), // same rationale
+    totalCost: z.string(), // same rationale
     optionsAndNextSteps: z.array(z.string()),
     closing: z.string(),
     contact: z
