@@ -23,11 +23,10 @@ export const AnalystOutputSchema = z
         role: z.string(),
         fte: z.number(),
       })
-    ), // role -> FTE count
+    ),
     totalDurationMonths: z.number().int().positive(),
     risks: z.array(z.string()),
     assumptions: z.array(z.string()),
-    // add any other fields you actually need here, but keep all required
   })
   .strict();
 
@@ -49,7 +48,6 @@ export const HumanResourceOutputSchema = z
 
 export const SalesOutputSchema = z
   .object({
-    logo: z.string(),
     date: z.string(),
     to: z.string(),
     from: z.string(),
@@ -61,14 +59,13 @@ export const SalesOutputSchema = z
         .object({
           role: z.string(),
           fte: z.number(),
-          unit: z.string(), // e.g., "FTE-month"
-          // add any other line fields you actually render
+          unit: z.string(),
         })
         .strict()
     ),
-    subtotal: z.string(), // keep as string if you format currency
-    contingency: z.string(), // same rationale
-    totalCost: z.string(), // same rationale
+    subtotal: z.string(),
+    contingency: z.string(),
+    totalCost: z.string(),
     optionsAndNextSteps: z.array(z.string()),
     closing: z.string(),
     contact: z
@@ -82,8 +79,8 @@ export const SalesOutputSchema = z
   })
   .strict();
 
-// export type ValidatorOutput = z.infer<typeof ValidatorOutputSchema>;
-// export type SolutionArchitectOutput = z.infer<typeof ArchitectOutputSchema>;
-// export type ProjectAnalystOutput = z.infer<typeof ProjectAnalystOutputSchema>;
-// export type HumanResourceOutput = z.infer<typeof HumanResourceOutputSchema>;
-// export type SalesOutput = z.infer<typeof SalesOutputSchema>;
+export type ValidatorOutput = z.infer<typeof ValidatorOutputSchema>;
+export type SolutionArchitectOutput = z.infer<typeof ArchitectOutputSchema>;
+export type ProjectAnalystOutput = z.infer<typeof AnalystOutputSchema>;
+export type HumanResourceOutput = z.infer<typeof HumanResourceOutputSchema>;
+export type SalesOutput = z.infer<typeof SalesOutputSchema>;
