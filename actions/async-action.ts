@@ -8,7 +8,7 @@ import {
   SalesOutputSchema,
   ValidatorOutput,
   ValidatorOutputSchema,
-} from "@/types/agents";
+} from "@/types/agents-schemas";
 import { agentops } from "agentops";
 
 import { runAgent } from "@/lib/run-agent";
@@ -29,10 +29,6 @@ export async function submitPrompt(
 }
 
 export async function runAgentsPipeline(inputText: string): Promise<string> {
-  await agentops.init({
-    apiKey: "cf1c25f8-abc2-4238-8ff2-380ab5165041",
-  });
-
   const [validatorAgent, architectAgent, analystAgent, hrAgent, salesAgent] =
     initAgents();
 
@@ -41,15 +37,6 @@ export async function runAgentsPipeline(inputText: string): Promise<string> {
     ValidatorOutputSchema,
     inputText
   );
-
-  const { keyRequirements, endDate, summary }: ValidatorOutput =
-    JSON.parse(validatorAgentOutput);
-
-  if (keyRequirements.length == 0 || endDate == "" || summary == "") {
-    return JSON.stringify({
-      error: "Missing essential initial information about the project",
-    });
-  }
 
   const architectAgentOutput = await runAgent(
     architectAgent,

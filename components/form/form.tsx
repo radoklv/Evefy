@@ -1,8 +1,8 @@
 "use client";
-import { FormState, submitPrompt } from "@/actions/asyncAction";
+import { FormState, submitPrompt } from "@/actions/async-action";
 import React, { useActionState, useEffect, useState } from "react";
 import styles from "./form.module.scss";
-import { SalesOutput } from "@/types/agents";
+import { SalesOutput } from "@/types/agents-schemas";
 import LoadingSpinner from "@/lib/loading-spinner/loading-spinner";
 import DisplayOffer from "../display-offer/display-offer";
 
